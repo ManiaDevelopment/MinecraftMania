@@ -1,8 +1,6 @@
 package org.oyasunadev.minecraftmania.client.gui;
 
 import com.mojang.minecraft.level.Level;
-import com.mojang.minecraft.net.NetworkPlayer;
-import com.mojang.minecraft.particle.SmokeParticle;
 import org.oyasunadev.minecraftmania.client.minecraft.MMApplet;
 import org.oyasunadev.minecraftmania.client.minecraft.MMPlayer2;
 import org.oyasunadev.minecraftmania.client.util.ParseServers;
@@ -10,8 +8,7 @@ import org.oyasunadev.minecraftmania.client.util.ParseServers;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -75,7 +72,7 @@ public class MPFrame extends JFrame implements Runnable
 					{
 						// TODO: Change last argument to false before release.
 
-						mmPlayer2 = new MMPlayer2(mmApplet.minecraft.level, mmApplet.minecraft.player, mmApplet.minecraft, true);
+						mmPlayer2 = new MMPlayer2(mmApplet.minecraft.level, mmApplet.minecraft.player, mmApplet.minecraft, true, this);
 
 						System.out.println("mmPlayer2 set");
 					}
@@ -89,17 +86,6 @@ public class MPFrame extends JFrame implements Runnable
 
 				// Play music.
 				//mmApplet.minecraft.s.a(mmApplet.minecraft.z, "calm");
-
-				addComponentListener(new ComponentAdapter()
-				{
-					@Override
-					public void componentResized(ComponentEvent e)
-					{
-						//LWJGLUtil.setDisplayMode(e.getComponent().getWidth(), e.getComponent().getHeight(), false);
-						mmApplet.resize(new Dimension(e.getComponent().getWidth(), e.getComponent().getHeight() - 38));
-						//GL11.glViewport(0, 0, mmApplet.minecraft.b, mmApplet.minecraft.c_Vector);
-					}
-				});
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();

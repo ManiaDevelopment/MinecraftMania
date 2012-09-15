@@ -6,6 +6,8 @@ import com.mojang.minecraft.render.TextureManager;
 import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -17,12 +19,60 @@ import java.io.IOException;
  */
 public class FontRenderer
 {
-	int width;
-	int height;
-
 	public FontRenderer(GameSettings gameSettings1, String image, TextureManager textureManager)
 	{
 		this.gameSettings = gameSettings1;
+
+		BufferedImage bi = null;
+
+		try {
+			bi = ImageIO.read(TextureManager.class.getResourceAsStream(image));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		imageSize = new Dimension(bi.getWidth(), bi.getHeight());
+		int[] fontData = new int[imageSize.width * imageSize.height];
+		charSize = new Dimension(imageSize.width / 16, imageSize.height / 16);
+
+		bi.getRGB(0, 0, imageSize.width, imageSize.height, fontData, 0, imageSize.width);
+
+		for(int character = 0; character < 128; character++)
+		{
+			int var0 = character % 16;
+			int var1 = character / 16;
+			int var2 = 0;
+
+			boolean ready = false;
+
+			for(; var2 < charSize.width && !ready; var2++)
+			{
+				int var3 = (var0 << 3) + var2;
+
+				ready = true;
+
+				for(int var4 = 0; var4 < charSize.height && ready; var4++)
+				{
+					int var5 = ((var1 << 3) + var4) * imageSize.width;
+
+					if((fontData[var3 + var5] & 255) > 128)
+					{
+						ready = false;
+					}
+				}
+			}
+
+			if(character == 32)
+			{
+				var2 = 4;
+			}
+
+			widths[character] = var2;
+		}
+
+		fontTextureID = textureManager.a(image);
+
+		/*this.gameSettings = gameSettings1;
 
 		BufferedImage bufferedImage;
 
@@ -32,8 +82,8 @@ public class FontRenderer
 			throw new RuntimeException(var13);
 		}
 
-		width = bufferedImage.getWidth();
-		height = bufferedImage.getHeight();
+		int width = bufferedImage.getWidth();
+		int height = bufferedImage.getHeight();
 
 		int[] fontData = new int[width * height];
 
@@ -71,12 +121,15 @@ public class FontRenderer
 			widths[character] = chWidth;
 		}
 
-		fontTextureID = textureManager.a(image);
+		fontTextureID = textureManager.a(image);*/
 	}
 
 	private int[] widths = new int[256];
 	private int fontTextureID = 0;
 	private GameSettings gameSettings;
+
+	public Dimension imageSize;
+	public Dimension charSize;
 
 	public void a(String text, int x, int y, int color) // render with shadow.
 	{

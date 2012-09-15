@@ -9,14 +9,18 @@ import com.mojang.minecraft.mob.Mob;
 import com.mojang.minecraft.mob.Zombie;
 import com.mojang.minecraft.net.NetworkPlayer;
 import com.mojang.minecraft.player.Player;
+import com.mojang.minecraft.render.LevelRenderer;
+import com.mojang.minecraft.render.ShapeRender;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.NVFogDistance;
+import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLU;
+import org.oyasunadev.minecraftmania.client.gui.MPFrame;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -42,12 +46,13 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class MMPlayer2 extends Player
 {
-	public MMPlayer2(Level level, Player player, Minecraft minecraft, boolean bypass)
+	public MMPlayer2(Level level, Player player, Minecraft minecraft, boolean bypass, JFrame mpFrame)
 	{
 		super(level);
 
 		level_ = level;
 		this.minecraft = minecraft;
+		this.mpFrame = mpFrame;
 
 		this.bypass = bypass;
 
@@ -122,8 +127,6 @@ public class MMPlayer2 extends Player
 
 		movement = new ControlMovement(this);
 	}
-
-
 
 	@Override
 	public void aiStep()
@@ -453,6 +456,7 @@ public class MMPlayer2 extends Player
 
 	private Level level_;
 	private Minecraft minecraft;
+	private JFrame mpFrame;
 
 	private ControlMovement movement;
 
@@ -609,8 +613,30 @@ public class MMPlayer2 extends Player
 			{
 				// TODO: Folder for each server.
 
-				//String s = String.format("level_%1$tY%1$tm%1$td%1$tH%1$tM%1$tS.dat", Calendar.getInstance());
-				String s = "server_level_" + minecraft.level.width + "_" + minecraft.level.height + "_" + minecraft.level.depth + ".dat";
+				String serverName = "";
+				File levelsFolder = null;
+
+				try {
+					Field field = ProgressBarDisplay.class.getDeclaredField("title");
+
+					field.setAccessible(true);
+
+					serverName = (String)field.get(level.rendererContext$5cd64a7f.progressBar);
+
+					levelsFolder = new File("levels/" + serverName);
+
+					if(!levelsFolder.exists())
+					{
+						levelsFolder.mkdir();
+					}
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (NoSuchFieldException e) {
+					e.printStackTrace();
+				}
+
+				String s = String.format("level_%1$tY%1$tm%1$td%1$tH%1$tM%1$tS.dat", Calendar.getInstance());
+				//String s = "server_level_" + minecraft.level.width + "_" + minecraft.level.height + "_" + minecraft.level.depth + ".dat";
 
 				FileOutputStream fos = null;
 				GZIPOutputStream gzos = null;
@@ -618,7 +644,7 @@ public class MMPlayer2 extends Player
 				DataOutputStream outputstream = null;
 
 				try {
-					fos = new FileOutputStream(s);
+					fos = new FileOutputStream(new File(levelsFolder, s));
 					gzos = new GZIPOutputStream(fos);
 					outputstream = new DataOutputStream(gzos);
 
@@ -653,111 +679,88 @@ public class MMPlayer2 extends Player
 
 			if(id == Keyboard.KEY_F4 && pressed)
 			{
-				/*minecraft.e.a();
-				minecraft.x = false;
-				minecraft.y.e = true;*/
-
-				xray = !xray;
-
 				try {
-					player.minecraft.textureManager.a(ImageIO.read(new File("terrain2.png")), 16);
-					minecraft.textureManager.a(ImageIO.read(new File("terrain2.png")), 16);
-				} catch (IOException e) {
+					Display.setFullscreen(false);
+					Display.setDisplayMode(new org.lwjgl.opengl.DisplayMode(minecraft.width, minecraft.height));
+				} catch (LWJGLException e) {
 					e.printStackTrace();
 				}
 
-				Display.update();
-
-				/*// Reset.
-				int width = (minecraft.b * 240 / minecraft.c_Vector);
-				int height = (minecraft.c_Vector * 240 / minecraft.c_Vector);
-				GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-				GL11.glMatrixMode(GL11.GL_PROJECTION);
-				GL11.glLoadIdentity();
-				GL11.glOrtho(0.0D, width, height, 0.0D, 100.0D, 300.0D);
-				GL11.glMatrixMode(GL11.GL_MODELVIEW);
-				GL11.glLoadIdentity();
-				GL11.glTranslatef(0.0F, 0.0F, -200.0F);*/
-
-				/*
-				Mob mob = null;
-				NetworkPlayer np = null;
-				for(Object o : minecraft.y.f.values())
-				{
-					mob = (Mob)o;
-					np = (NetworkPlayer)mob;
-
-					np.setPos(player.x, player.y, player.z);
-
-					/*File file = new File("minecraft/resources/char.png");
-					try {
-						np.newTexture = ImageIO.read(file);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}*/
-
-					//np.displayName = np.displayName.replace("7", "c_Vector");
-				//}
-				/**/
-
-				//minecraft.m is the game display.
-				//minecraft.n is the game control.
+				minecraft.resize();
 			}
 
 			if(id == Keyboard.KEY_F6 && pressed)
 			{
-				//minecraft.n.fontScale = 0.5f;
+				try {
+					if(Display.isFullscreen())
+					{
 
-				/*com.mojang.minecraft.level.tile.a tile;
+						Display.setFullscreen(false);
+						Display.setDisplayMode(new DisplayMode(854, 480));
 
-				for(Object o : com.mojang.minecraft.a.a)
-				{
-					tile = (com.mojang.minecraft.level.tile.a)o;
-
-					System.out.println(tile);
-				}*/
-
-				/*com.mojang.minecraft.b chatline;
-
-				for(Object o : minecraft.w.a)
-				{
-					chatline = (com.mojang.minecraft.b)o;
-
-					System.out.println(chatline.a);
-				}*/
-
-				/*try {
-					Field fieldWidth = minecraft.w.getClass().getDeclaredField("f");
-					Field fieldHeight = minecraft.w.getClass().getDeclaredField("g");
-
-					fieldWidth.setAccessible(true);
-					fieldHeight.setAccessible(true);
-
-					int width = (Integer)fieldWidth.get(minecraft.w);
-					int height = (Integer)fieldHeight.get(minecraft.w);
-
-					System.out.println("BEFORE: " + width + ", " + height);
-
-					fieldWidth.set(minecraft.w, (Integer)fieldWidth.get(minecraft.w) / 2);
-					fieldHeight.set(minecraft.w, (Integer)fieldHeight.get(minecraft.w) / 2);
-
-					width = (Integer)fieldWidth.get(minecraft.w);
-					height = (Integer)fieldHeight.get(minecraft.w);
-
-					System.out.println("AFTER: " + width + ", " + height);
-				} catch (NoSuchFieldException e) {
+						mpFrame.setSize(854, 480);
+						((MPFrame)mpFrame).finish();
+					} else {
+						Display.setDisplayMode(Display.getDesktopDisplayMode());
+						Display.setFullscreen(true);
+					}
+				} catch (LWJGLException e) {
 					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				}*/
+				}
+
+				minecraft.resize();
 			}
 
-			if(id == Keyboard.KEY_F7)
+			if(id == Keyboard.KEY_F7 && pressed)
 			{
-				minecraft.renderer.a();
-
-				Display.update();
 			}
+
+			/*if(id == Keyboard.KEY_F7 && pressed)
+			{
+				/*String s = String.format("level_%1$tY%1$tm%1$td%1$tH%1$tM%1$tS.dat", Calendar.getInstance());
+				//String s = "server_level_" + minecraft.level.width + "_" + minecraft.level.height + "_" + minecraft.level.depth + ".dat";
+
+				try {
+					minecraft.levelIO.a(minecraft.level, new FileOutputStream(new File(s)));
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}*/
+
+				/*int textureID = minecraft.textureManager.a("/terrain2.png");
+
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureId);
+
+				/*for(Object o : minecraft.textureManager.a.keySet())
+				{
+					System.out.println(o + ", " + minecraft.textureManager.a.get(o));
+				}*/
+
+				//minecraft.a.a1(minecraft.player, 0, "/terrain2.png");
+
+				//ShapeRender.a.b();
+
+				//////////////////////////////////////
+
+				/*
+			   Mob mob = null;
+			   NetworkPlayer np = null;
+			   for(Object o : minecraft.y.f.values())
+			   {
+				   mob = (Mob)o;
+				   np = (NetworkPlayer)mob;
+
+				   np.setPos(player.x, player.y, player.z);
+
+				   /*File file = new File("minecraft/resources/char.png");
+				   try {
+					   np.newTexture = ImageIO.read(file);
+				   } catch (IOException e) {
+					   e.printStackTrace();
+				   }*/
+
+				//np.displayName = np.displayName.replace("7", "c");
+				//}
+			//}
 		}
 
 		public final void update()
