@@ -237,33 +237,33 @@ public final class Minecraft implements Runnable
 	}
 
 	/**/
-	public final void run() {
-		this.running = true;
+	public final void run()
+	{
+		running = true;
 
 		try {
-			Minecraft var1 = this;
-			if(this.canvas != null) {
-				Display.setParent(this.canvas);
-			} else if(this.fullscreen) {
+			Minecraft localMC = this;
+
+			if(canvas != null)
+			{
+				Display.setParent(canvas);
+			} else if(fullscreen) {
 				Display.setFullscreen(true);
-				this.width = Display.getDisplayMode().getWidth();
-				this.height = Display.getDisplayMode().getHeight();
+
+				width = Display.getDisplayMode().getWidth();
+				height = Display.getDisplayMode().getHeight();
 			} else {
-				Display.setDisplayMode(new org.lwjgl.opengl.DisplayMode(this.width, this.height));
+				Display.setDisplayMode(new org.lwjgl.opengl.DisplayMode(width, height));
 			}
 
 			Display.setTitle("Minecraft 0.30");
 
 			try {
 				Display.create();
-			} catch (LWJGLException var57) {
-				var57.printStackTrace();
+			} catch (LWJGLException e) {
+				e.printStackTrace();
 
-				try {
-					Thread.sleep(1000L);
-				} catch (InterruptedException var56) {
-					;
-				}
+				Thread.sleep(1000L);
 
 				Display.create();
 			}
@@ -271,13 +271,10 @@ public final class Minecraft implements Runnable
 			Keyboard.create();
 			Mouse.create();
 
-			try {
-				Controllers.create();
-			} catch (Exception var55) {
-				var55.printStackTrace();
-			}
+			Controllers.create();
 
 			a("Pre startup");
+
 			GL11.glEnable(3553);
 			GL11.glShadeModel(7425);
 			GL11.glClearDepth(1.0D);
@@ -289,137 +286,143 @@ public final class Minecraft implements Runnable
 			GL11.glMatrixMode(5889);
 			GL11.glLoadIdentity();
 			GL11.glMatrixMode(5888);
+
 			a("Startup");
-			String var3 = "minecraft";
-			String var5 = System.getProperty("user.home", ".");
-			String var6;
-			File var7;
-			/*switch(OperatingSystemLookup.a[((var6 = System.getProperty("os.name").toLowerCase()).contains("win")?Minecraft$OS.windows:(var6.contains("mac")?Minecraft$OS.macos:(var6.contains("solaris")?Minecraft$OS.solaris:(var6.contains("sunos")?Minecraft$OS.solaris:(var6.contains("linux")?Minecraft$OS.linux:(var6.contains("unix")?Minecraft$OS.linux:Minecraft$OS.unknown)))))).ordinal()]) {
-				case 1:
-				case 2:
-					var7 = new File(var5, '.' + var3 + '/');
-					break;
-				case 3:
-					String var8;
-					if((var8 = System.getenv("APPDATA")) != null) {
-						var7 = new File(var8, "." + var3 + '/');
-					} else {
-						var7 = new File(var5, '.' + var3 + '/');
-					}
-					break;
-				case 4:
-					var7 = new File(var5, "Library/Application Support/" + var3);
-					break;
-				default:
-					var7 = new File(var5, var3 + '/');
-			}*/
-			String var8;
-			if((var8 = System.getenv("APPDATA")) != null) {
-				var7 = new File(var8, "." + var3 + '/');
+
+			String minecraftFolderName = "minecraftmania";
+			String appData = System.getProperty("user.home", ".");
+			File minecraftFolder;
+			String appData1 = System.getenv("APPDATA");
+
+			if(appData != null)
+			{
+				minecraftFolder = new File(appData1, "." + minecraftFolderName + '/');
 			} else {
-				var7 = new File(var5, '.' + var3 + '/');
+				minecraftFolder = new File(appData, '.' + minecraftFolderName + '/');
 			}
 
-			if(!var7.exists() && !var7.mkdirs()) {
-				throw new RuntimeException("The working directory could not be created: " + var7);
+			if(!minecraftFolder.exists() && !minecraftFolder.mkdirs())
+			{
+				throw new RuntimeException("The working directory could not be created: " + minecraftFolder);
 			}
 
-			File var2 = var7;
-			this.settings = new GameSettings(this, var7);
-			this.textureManager = new TextureManager(this.settings);
-			this.textureManager.a((TextureFX)(new TextureLavaFX()));
-			this.textureManager.a((TextureFX)(new TextureWaterFX()));
-			this.fontRenderer = new FontRenderer(this.settings, "/default.png", this.textureManager);
-			IntBuffer var9;
-			(var9 = BufferUtils.createIntBuffer(256)).clear().limit(256);
-			this.a = new LevelRenderer(this, this.textureManager);
+			File copyOfMinecraftFolder = minecraftFolder;
+
+			settings = new GameSettings(this, minecraftFolder);
+			textureManager = new TextureManager(settings);
+
+			TextureLavaFX lavaFX = new TextureLavaFX();
+			TextureWaterFX waterFX = new TextureWaterFX();
+
+			textureManager.a(lavaFX);
+			textureManager.a(waterFX);
+
+			fontRenderer = new FontRenderer(settings, "/default.png", textureManager);
+
+			IntBuffer buffer = BufferUtils.createIntBuffer(256);
+
+			buffer.clear().limit(256);
+
+			a = new LevelRenderer(this, textureManager);
+
 			Item.initModels();
+
 			Mob.modelCache = new ModelManager();
-			GL11.glViewport(0, 0, this.width, this.height);
-			if(this.server != null && this.sessionData != null) {
-				Level var85;
-				(var85 = new Level()).setData(8, 8, 8, new byte[512]);
-				this.a(var85);
+
+			GL11.glViewport(0, 0, width, height);
+			if(server != null && sessionData != null)
+			{
+				Level levelTmp = new Level();
+
+				levelTmp.setData(8, 8, 8, new byte[512]);
+
+				a(levelTmp);
 			} else {
-				boolean var10 = false;
+				if(localMC.loadmap_user != null)
+				{
+					localMC.a(localMC.loadmap_user, localMC.loadmap_id);
+				} else if(!localMC.k) {
+					Level levelTmp = localMC.levelIO.a(new FileInputStream(new File("level.dat")));
 
-				try {
-					if(var1.loadmap_user != null) {
-						var1.a(var1.loadmap_user, var1.loadmap_id);
-					} else if(!var1.k) {
-						Level var11 = null;
-						if((var11 = var1.levelIO.a((InputStream)(new FileInputStream(new File("level.dat"))))) != null) {
-							var1.a(var11);
-						}
+					if(levelTmp != null)
+					{
+						localMC.a(levelTmp);
 					}
-				} catch (Exception var54) {
-					var54.printStackTrace();
 				}
 
-				if(this.level == null) {
-					this.a(1);
+				if(level == null)
+				{
+					a(1);
 				}
 			}
 
-			this.particleManager = new ParticleManager(this.level, this.textureManager);
-			if(this.k) {
-				try {
-					var1.cursor = new org.lwjgl.input.Cursor(16, 16, 0, 0, 1, var9, (IntBuffer)null);
-				} catch (LWJGLException var53) {
-					var53.printStackTrace();
-				}
+			particleManager = new ParticleManager(level, textureManager);
+
+			if(k)
+			{
+				localMC.cursor = new org.lwjgl.input.Cursor(16, 16, 0, 0, 1, buffer, null);
 			}
+
+			localMC.audioPlayer = new i(localMC.settings);
+			i iTmp = localMC.audioPlayer;
 
 			try {
-				var1.audioPlayer = new i(var1.settings);
-				i var4 = var1.audioPlayer;
+				AudioFormat audioFormat = new AudioFormat(44100.0F, 16, 2, true, true);
 
-				try {
-					AudioFormat var67 = new AudioFormat(44100.0F, 16, 2, true, true);
-					var4.b = AudioSystem.getSourceDataLine(var67);
-					var4.b.open(var67, 4410);
-					var4.b.start();
-					var4.a = true;
-					Thread var72;
-					(var72 = new Thread(var4)).setDaemon(true);
-					var72.setPriority(10);
-					var72.start();
-				} catch (Exception var51) {
-					var51.printStackTrace();
-					var4.a = false;
-				}
+				iTmp.b = AudioSystem.getSourceDataLine(audioFormat);
 
-				var1.resourceThread = new ResourceDownloadThread(var2, var1);
-				var1.resourceThread.start();
-			} catch (Exception var52) {
-				;
+				iTmp.b.open(audioFormat, 4410);
+				iTmp.b.start();
+
+				iTmp.a = true;
+
+				Thread thread1 = new Thread(iTmp);
+
+				thread1.setDaemon(true);
+				thread1.setPriority(10);
+				thread1.start();
+			} catch(Exception e) {
+				e.printStackTrace();
+
+				iTmp.a = false;
 			}
+
+			localMC.resourceThread = new ResourceDownloadThread(copyOfMinecraftFolder, localMC);
+			localMC.resourceThread.start();
 
 			a("Post startup");
-			this.hud = new HUDScreen(this, this.width, this.height);
-			(new SkinDownloadThread(this)).start();
-			if(this.server != null && this.sessionData != null) {
-				this.networkManager = new NetworkManager(this, this.server, this.port, this.sessionData.b, this.sessionData.d);
+
+			hud = new HUDScreen(this, width, height);
+
+			new SkinDownloadThread(this).start();
+
+			if(server != null && sessionData != null)
+			{
+				networkManager = new NetworkManager(this, server, port, sessionData.b, sessionData.d);
 			}
-		} catch (Exception var62) {
-			var62.printStackTrace();
-			JOptionPane.showMessageDialog((Component)null, var62.toString(), "Failed to start Minecraft", 0);
+		} catch(Exception e1) {
+			e1.printStackTrace();
+
+			JOptionPane.showMessageDialog(null, e1.toString(), "Failed to start Minecraft", 0);
+
 			return;
 		}
 
-		long var13 = System.currentTimeMillis();
-		int var15 = 0;
+		long time = System.currentTimeMillis();
+		int tick = 0;
 
 		try {
-			while(this.running) {
-				if(this.waiting) {
+			while(running)
+			{
+				if(waiting)
+				{
 					Thread.sleep(100L);
 				} else {
-					if(this.canvas == null && Display.isCloseRequested()) {
-						this.running = false;
+					if(canvas == null && Display.isCloseRequested())
+					{
+						running = false;
 					}
 
-					// NEW
 					if(!Display.isFullscreen()
 							&& (canvas.getWidth() != Display.getDisplayMode().getWidth()
 							|| canvas.getHeight() != Display.getDisplayMode().getHeight()))
@@ -433,8 +436,8 @@ public final class Minecraft implements Runnable
 
 						resize();
 					}
-					// NEW
 
+					// Have not edited past this yet.
 					try {
 						Timer var63 = this.timer;
 						long var16;
@@ -1122,17 +1125,17 @@ public final class Minecraft implements Runnable
 						}
 
 						a("Post render");
-						++var15;
+						++tick;
 					} catch (Exception var58) {
 						this.a((PopUpScreen)(new ErrorScreen("Client error", "The game broke! [" + var58 + "]")));
 						var58.printStackTrace();
 					}
 
-					while(System.currentTimeMillis() >= var13 + 1000L) {
-						this.debugInfo = var15 + " fps, " + Chunk.a + " chunk updates";
+					while(System.currentTimeMillis() >= time + 1000L) {
+						this.debugInfo = tick + " fps, " + Chunk.a + " chunk updates";
 						Chunk.a = 0;
-						var13 += 1000L;
-						var15 = 0;
+						time += 1000L;
+						tick = 0;
 					}
 				}
 			}
