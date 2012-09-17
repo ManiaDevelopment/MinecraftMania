@@ -12,7 +12,6 @@ import com.mojang.minecraft.level.generator.LevelGenerator;
 import com.mojang.minecraft.level.liquid.LiquidType;
 import com.mojang.minecraft.level.tile.Block;
 import com.mojang.minecraft.mob.Mob;
-import com.mojang.minecraft.model.HumanoidModel;
 import com.mojang.minecraft.model.ModelManager;
 import com.mojang.minecraft.model.ModelRenderer;
 import com.mojang.minecraft.model.Vec3D;
@@ -45,7 +44,6 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Cursor;
 import java.io.*;
 import java.nio.IntBuffer;
 import java.util.*;
@@ -98,6 +96,7 @@ public final class Minecraft implements Runnable
 			}
 		}
 
+		Minecraft.minecraft = this;
 	}
 
 	public GameMode gameMode = new CreativeGameMode(this);
@@ -135,13 +134,19 @@ public final class Minecraft implements Runnable
 	public MovingObjectPosition selected;
 	public GameSettings settings;
 	private MinecraftApplet minecraftApplet;
-	String server;
-	int port;
+	public String server;
+	public int port;
 	public volatile boolean running; // public is NEW.
 	public String debugInfo;
 	public boolean hasMouse;
 	private int lastClick;
 	public boolean raining;
+
+	public static Minecraft minecraft;
+
+	public File minecraftFolder;
+
+	//public static int mipmapMode = 0;
 
 	public void a(PopUpScreen screen) //set current screen
 	{
@@ -307,6 +312,8 @@ public final class Minecraft implements Runnable
 			}
 
 			File copyOfMinecraftFolder = minecraftFolder;
+
+			this.minecraftFolder = copyOfMinecraftFolder;
 
 			settings = new GameSettings(this, minecraftFolder);
 			textureManager = new TextureManager(settings);
@@ -771,7 +778,12 @@ public final class Minecraft implements Runnable
 												}
 
 												if(var83 == 1) {
-													var110 = var96.textureManager.a("/terrain.png");
+													if(settings.texturePack.equals("none"))
+													{
+														var110 = var96.textureManager.a("/terrain.png");
+													} else {
+														var110 = var96.textureManager.a(settings.texturePack);
+													}
 												}
 
 												GL11.glBindTexture(3553, var110);
@@ -872,7 +884,12 @@ public final class Minecraft implements Runnable
 											GL11.glColor4f(1.0F, 1.0F, 1.0F, (MathHelper.a((float)System.currentTimeMillis() / 100.0F) * 0.2F + 0.4F) * 0.5F);
 											if(var89.i > 0.0F) {
 												GL11.glBlendFunc(774, 768);
-												var108 = var89.b.a("/terrain.png");
+												if(settings.texturePack.equals("none"))
+												{
+													var108 = var89.b.a("/terrain.png");
+												} else {
+													var108 = var89.b.a(settings.texturePack);
+												}
 												GL11.glBindTexture(3553, var108);
 												GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
 												GL11.glPushMatrix();
@@ -968,7 +985,12 @@ public final class Minecraft implements Runnable
 										}
 
 										if(var120 > 0) {
-											GL11.glBindTexture(3553, var89.b.a("/terrain.png"));
+											if(settings.texturePack.equals("none"))
+											{
+												GL11.glBindTexture(3553, var89.b.a("/terrain.png"));
+											} else {
+												GL11.glBindTexture(3553, var89.b.a(settings.texturePack));
+											}
 											GL11.glCallLists(var89.d);
 										}
 
@@ -1072,7 +1094,12 @@ public final class Minecraft implements Runnable
 											var34 = 0.4F;
 											GL11.glScalef(0.4F, var34, var34);
 											GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-											GL11.glBindTexture(3553, var112.a.textureManager.a("/terrain.png"));
+											if(settings.texturePack.equals("none"))
+											{
+												GL11.glBindTexture(3553, var112.a.textureManager.a("/terrain.png"));
+											} else {
+												GL11.glBindTexture(3553, var112.a.textureManager.a(settings.texturePack));
+											}
 											var112.b.b(var123);
 										} else {
 											var116.bindTexture$4211e026(var112.a.textureManager);
@@ -1298,7 +1325,12 @@ public final class Minecraft implements Runnable
 			++((ChatLine)var17.chatHistory.get(var16)).time;
 		}
 
-		GL11.glBindTexture(3553, this.textureManager.a("/terrain.png"));
+		if(settings.texturePack.equals("none"))
+		{
+			GL11.glBindTexture(3553, this.textureManager.a("/terrain.png"));
+		} else {
+			GL11.glBindTexture(3553, this.textureManager.a(settings.texturePack));
+		}
 		TextureManager var19 = this.textureManager;
 
 		for(var16 = 0; var16 < var19.e.size(); ++var16) {

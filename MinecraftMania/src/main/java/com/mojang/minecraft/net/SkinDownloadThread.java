@@ -35,6 +35,19 @@ public final class SkinDownloadThread extends Thread
 			if(connection.getResponseCode() == 400 || connection.getResponseCode() == 403 || connection.getResponseCode() == 404
 					|| connection.getResponseCode() == 502)
 			{
+				connection = (HttpURLConnection)(new URL("http://www.minecraft.net/skin/oyasunadev.png").openConnection());
+
+				connection.setDoInput(true);
+				connection.setDoOutput(false);
+
+				connection.connect();
+
+				if(connection.getResponseCode() != 400 || connection.getResponseCode() != 403 || connection.getResponseCode() != 404
+						|| connection.getResponseCode() != 502)
+				{
+					networkPlayer.newTexture = ImageIO.read(connection.getInputStream());
+				}
+
 				return;
 			}
 

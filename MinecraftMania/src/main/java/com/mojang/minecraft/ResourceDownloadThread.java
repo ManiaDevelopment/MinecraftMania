@@ -49,6 +49,8 @@ public class ResourceDownloadThread extends Thread
 		{
 			minecraft.audioManager.a("calm" + i + ".ogg", new File(musicFolder, "calm" + i + ".ogg"));
 		}
+
+		a = true;
 	}
 
 	private File minecraftFolder;

@@ -136,7 +136,13 @@ public final class HUDScreen extends Screen {
 				GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
 				GL11.glTranslatef(-1.5F, 0.5F, 0.5F);
 				GL11.glScalef(-1.0F, -1.0F, -1.0F);
-				int var20 = var6.a("/terrain.png");
+				int var20;// = var6.a("/terrain.png");
+				if(minecraft.settings.texturePack.equals("none"))
+				{
+					var20 = var6.a("/terrain.png");
+				} else {
+					var20 = var6.a(minecraft.settings.texturePack);
+				}
 				GL11.glBindTexture(3553, var20);
 				var7.b();
 				Block.b[var15].a(var7);

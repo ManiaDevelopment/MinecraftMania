@@ -4,36 +4,23 @@ import com.mojang.minecraft.Entity;
 import com.mojang.minecraft.Minecraft;
 import com.mojang.minecraft.ProgressBarDisplay;
 import com.mojang.minecraft.level.Level;
-import com.mojang.minecraft.mob.Creeper;
-import com.mojang.minecraft.mob.Mob;
-import com.mojang.minecraft.mob.Zombie;
-import com.mojang.minecraft.net.NetworkPlayer;
+import com.mojang.minecraft.net.NetworkManager;
 import com.mojang.minecraft.player.Player;
-import com.mojang.minecraft.render.LevelRenderer;
-import com.mojang.minecraft.render.ShapeRender;
+import com.mojang.minecraft.render.texture.TextureFX;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.*;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.util.glu.GLU;
 import org.oyasunadev.minecraftmania.client.gui.MPFrame;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBufferByte;
-import java.awt.image.Raster;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.Calendar;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 import java.util.zip.GZIPOutputStream;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -203,6 +190,39 @@ public class MMPlayer2 extends Player
 
 				movement.update();
 
+				//if(movement.xray)
+				//{
+					/*float speedX = 6.0F;
+					float speedZ = 6.0F;
+
+					x += Math.sin(xd * 3.1415F / 180.0F) * speed;
+					z += Math.cos(zd * 3.1415F / 180.0F) * speed;*/
+
+					/*
+					// Walk forward.
+					x -= speed * (float)Math.sin(Math.toRadians(xd));
+					y += speed * (float)Math.tan(Math.toRadians(yd));
+					z += speed * (float)Math.cos(Math.toRadians(zd));
+					*/
+
+					/*
+					// Walk backwards.
+					x += speed * (float)Math.sin(Math.toRadians(xd));
+					y -= speed * (float)Math.tan(Math.toRadians(yd));
+					z -= speed * (float)Math.cos(Math.toRadians(zd));
+					*/
+
+					/*
+					// Fly up.
+					y += speed;
+					*/
+
+					/*
+					// Fly down
+					y -= speed;
+					*/
+				//}
+
 				if(fly)
 				{
 					if(movement.fly)
@@ -240,7 +260,7 @@ public class MMPlayer2 extends Player
 						zd *= 0.6F;
 
 						// 3D FLY
-						// DOESN'T WORK RIGHT.
+						// DOESN'T WORK CORRECTLY.
 						/*yd = (float)((double)yd - zd);
 											   if(horizontalCollision && isFree(xd, ((yd + 0.6F) - y) + yy, zd))
 											   {
@@ -255,7 +275,7 @@ public class MMPlayer2 extends Player
 					{
 						yd += 0.08F * movement.mult;
 					} else if(inLava) {
-						yd += 0.07F * movement.mult;
+						yd += 0.08F * movement.mult;
 					} else if(onGround) {
 						if(!movement.fall)
 						{
@@ -506,22 +526,22 @@ public class MMPlayer2 extends Player
 
 		public void processKey(int id, boolean pressed)
 		{
-			if(id == Keyboard.KEY_W) //w
+			if(id == minecraft.settings.i.key) //w
 			{
 				keylist[0] = pressed;
 			}
 
-			if(id == Keyboard.KEY_A) //a
+			if(id == minecraft.settings.j.key) //a
 			{
 				keylist[1] = pressed;
 			}
 
-			if(id == Keyboard.KEY_S) //s
+			if(id == minecraft.settings.k.key) //s
 			{
 				keylist[2] = pressed;
 			}
 
-			if(id == Keyboard.KEY_D) //d
+			if(id == minecraft.settings.l.key) //d
 			{
 				keylist[3] = pressed;
 			}
@@ -680,18 +700,6 @@ public class MMPlayer2 extends Player
 			if(id == Keyboard.KEY_F4 && pressed)
 			{
 				try {
-					Display.setFullscreen(false);
-					Display.setDisplayMode(new org.lwjgl.opengl.DisplayMode(minecraft.width, minecraft.height));
-				} catch (LWJGLException e) {
-					e.printStackTrace();
-				}
-
-				minecraft.resize();
-			}
-
-			if(id == Keyboard.KEY_F6 && pressed)
-			{
-				try {
 					if(Display.isFullscreen())
 					{
 
@@ -711,9 +719,42 @@ public class MMPlayer2 extends Player
 				minecraft.resize();
 			}
 
+			if(id == Keyboard.KEY_F6 && pressed)
+			{
+				minecraft.textureManager.a("test.zip");
+
+				minecraft.textureManager.a.clear();
+				minecraft.textureManager.b.clear();
+
+				minecraft.a.a();
+			}
+
+			/*if(id == Keyboard.KEY_F6 && pressed)
+			{
+				Minecraft.mipmapMode = 0;
+
+				minecraft.textureManager.a.clear();
+				minecraft.textureManager.b.clear();
+				minecraft.a.a();
+			}
+
 			if(id == Keyboard.KEY_F7 && pressed)
 			{
+				Minecraft.mipmapMode = 1;
+
+				minecraft.textureManager.a.clear();
+				minecraft.textureManager.b.clear();
+				minecraft.a.a();
 			}
+
+			if(id == Keyboard.KEY_F8 && pressed)
+			{
+				Minecraft.mipmapMode = 2;
+
+				minecraft.textureManager.a.clear();
+				minecraft.textureManager.b.clear();
+				minecraft.a.a();
+			}*/
 
 			/*if(id == Keyboard.KEY_F7 && pressed)
 			{
@@ -744,7 +785,7 @@ public class MMPlayer2 extends Player
 				/*
 			   Mob mob = null;
 			   NetworkPlayer np = null;
-			   for(Object o : minecraft.y.f.values())
+			   for(Object o : minecraft.y.settings.values())
 			   {
 				   mob = (Mob)o;
 				   np = (NetworkPlayer)mob;
@@ -758,7 +799,7 @@ public class MMPlayer2 extends Player
 					   e.printStackTrace();
 				   }*/
 
-				//np.displayName = np.displayName.replace("7", "c");
+				//np.displayName = np.displayName.replace("7", "textureIntBuffer");
 				//}
 			//}
 		}
@@ -783,7 +824,7 @@ public class MMPlayer2 extends Player
 				move++;
 			}
 
-			if(keylist[3]) //d
+			if(keylist[3]) //textureByteBuffer
 			{
 				strafe++;
 			}

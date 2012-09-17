@@ -1,6 +1,8 @@
 package org.oyasunadev.minecraftmania.client.gui;
 
 import com.mojang.minecraft.level.Level;
+import com.mojang.minecraft.net.NetworkPlayer;
+import org.lwjgl.opengl.Display;
 import org.oyasunadev.minecraftmania.client.minecraft.MMApplet;
 import org.oyasunadev.minecraftmania.client.minecraft.MMPlayer2;
 import org.oyasunadev.minecraftmania.client.util.ParseServers;
@@ -55,8 +57,8 @@ public class MPFrame extends JFrame implements Runnable
 			{
 				Thread.sleep(1000);
 
-				/*NetworkPlayer np = null;
-				for(Object o : mmApplet.minecraft.y.f.values())
+				NetworkPlayer np = null;
+				for(Object o : mmApplet.minecraft.networkManager.f.values())
 				{
 					np = (NetworkPlayer)o;
 
@@ -64,7 +66,7 @@ public class MPFrame extends JFrame implements Runnable
 					{
 						np.displayName = np.displayName.replace("7", "e");
 					}
-				}*/
+				}
 
 				if((mmApplet.minecraft.level != null && oldLevel != mmApplet.minecraft.level))
 				{
@@ -92,12 +94,12 @@ public class MPFrame extends JFrame implements Runnable
 		}
 	}
 
-	private String username;
-	private String sessionid;
-	private boolean haspaid;
-	private String server;
-	private int port;
-	private String mppass;
+	public String username;
+	public String sessionid;
+	public boolean haspaid;
+	public String server;
+	public int port;
+	public String mppass;
 
 	private MMApplet mmApplet;
 	private MMPlayer2 mmPlayer2;
@@ -107,33 +109,19 @@ public class MPFrame extends JFrame implements Runnable
 	public void startMinecraft()
 	{
 		setSize(ParseServers.width, ParseServers.height);
-
-		/**/
-
 		setLayout(new BorderLayout());
 
-		/**/
-
-		System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "false");
-
 		mmApplet = new MMApplet(false, username, sessionid, haspaid, server, port, mppass);
-
-		System.out.println(mppass);
 
 		mmApplet.setSize(getWidth(), getHeight() - 38);
 
 		mmApplet.init();
-
-		//add(Box.createVerticalStrut(10));
 
 		add(mmApplet.canvas);
 
 		mmApplet.startGameThread();
 
 		new Thread(this).start();
-
-		// send message local
-		//minecraft.w.a();
 	}
 
 	public void finish()
