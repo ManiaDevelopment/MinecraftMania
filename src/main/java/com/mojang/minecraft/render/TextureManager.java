@@ -52,6 +52,8 @@ public class TextureManager
 	public File minecraftFolder;
 	public File texturesFolder;
 
+	public int previousMipmapMode;
+
 	public int a(String file) // bind texture
 	{
 		if(a.get(file) != null)
@@ -233,12 +235,11 @@ public class TextureManager
 	public void a(BufferedImage image, int textureID) // bind texture
 	{
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
-		//if(Minecraft.mipmapMode > 0)
-		if(f.smoothing)
+		if(f.smoothing > 0)
 		{
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, 2);
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST_MIPMAP_LINEAR);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 		} else {
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
@@ -279,21 +280,65 @@ public class TextureManager
 
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, d);
 
-		/*switch(Minecraft.mipmapMode)
+		if(f.smoothing > 0)
 		{
-			case 1:
+			/*int textureWidth = GL11.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
+			int tileWidth = textureWidth / 16;
+			int mipLevels = (int)Math.round(Math.log((double)tileWidth) / Math.log(2D));
+
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LOD, mipLevels);*/
+
+			switch(f.smoothing)
+			{
+				case 1:
+					if(previousMipmapMode != f.smoothing)
+					{
+						System.out.println("Using OpenGL 3.0 for mipmap generation.");
+					}
+
+					GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+					break;
+				case 2:
+					if(previousMipmapMode != f.smoothing)
+					{
+						System.out.println("Using GL_EXT_framebuffer_object extension for mipmap generation.");
+					}
+
+					EXTFramebufferObject.glGenerateMipmapEXT(GL11.GL_TEXTURE_2D);
+					break;
+				case 3:
+					if(previousMipmapMode != f.smoothing)
+					{
+						System.out.println("Using GL_GENERATE_MIPMAP for mipmap generation. This might slow down with large textures.");
+					}
+
+					GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
+					break;
+			}
+
+			/*ContextCapabilities capabilities = GLContext.getCapabilities();
+
+			if(capabilities.OpenGL30)
+			{
+				System.out.println("Using OpenGL 3.0 for mipmap generation.");
+
 				GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-				break;
-			case 2:
+			} else if(capabilities.GL_EXT_framebuffer_object) {
+				System.out.println("Using GL_EXT_framebuffer_object extension for mipmap generation.");
+
 				EXTFramebufferObject.glGenerateMipmapEXT(GL11.GL_TEXTURE_2D);
-				//GL11.glTexParameteri(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, 8); // Anisotropy.
-				break;
-		}*/
-		if(f.smoothing)
-		{
-			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-			EXTFramebufferObject.glGenerateMipmapEXT(GL11.GL_TEXTURE_2D);
+			} else if(capabilities.OpenGL14) {
+				System.out.println("Using GL_GENERATE_MIPMAP for mipmap generation. This might slow down with large textures.");
+
+				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL14.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
+			}*/
+
+			GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.3F);
+		} else {
+
 		}
+
+		previousMipmapMode = f.smoothing;
 	}
 
 	public void a(TextureFX textureFX) // add animated texture

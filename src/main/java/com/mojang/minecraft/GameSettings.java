@@ -70,7 +70,8 @@ public final class GameSettings
 	private File w; // file
 	public int t; // count
 
-	public boolean smoothing = false;
+	public int smoothing = 0;
+	public String[] smoothingOptions = new String[] {"OFF", "1", "2", "3"};
 	public String texturePack = "none";
 	public int currentTexturePack = 0;
 	public List<String> texturePacks = new ArrayList<String>();
@@ -164,7 +165,12 @@ public final class GameSettings
 
 		if(setting == 8)
 		{
-			smoothing = !smoothing;
+			if(smoothing == smoothingOptions.length - 1)
+			{
+				smoothing = 0;
+			} else {
+				smoothing++;
+			}
 
 			v.textureManager.a.clear();
 			v.textureManager.b.clear();
@@ -200,7 +206,7 @@ public final class GameSettings
 				: (id == 5 ? "View bobbing: " + (f ? "ON" : "OFF")
 				: (id == 6 ? "3d anaglyph: " + (g ? "ON" : "OFF")
 				: (id == 7 ? "Limit framerate: " + (h ? "ON" : "OFF")
-				: (id == 8 ? "Smoothing: " + (smoothing ? "ON" : "OFF")
+				: (id == 8 ? "Smoothing: " + smoothingOptions[smoothing]
 				: (id == 9 ? "Texture Pack: " + (currentTexturePack == 0 ? "none" : texturePacks.get(currentTexturePack))
 				: "")))))))));
 	}
@@ -259,7 +265,7 @@ public final class GameSettings
 
 					if(setting[0].equals("smoothing"))
 					{
-						smoothing = setting[1].equals("true");
+						smoothing = Integer.parseInt(setting[1]);
 					}
 
 					for(int index = 0; index < s.length; index++)
