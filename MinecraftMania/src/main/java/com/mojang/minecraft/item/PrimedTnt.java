@@ -117,6 +117,8 @@ public class PrimedTnt extends Entity {
 		if(Minecraft.minecraft.settings.texturePack.equals("none"))
 		{
 			var3 = var1.a("/terrain.png");
+		} else if(Minecraft.minecraft.settings.texturePack.equals("xray")) {
+			var3 = var1.a("", "XRay.zip", "/terrain.png");
 		} else {
 			var3 = var1.a(Minecraft.minecraft.settings.texturePack);
 		}

@@ -46,7 +46,7 @@ public final class GameSettings
 		}
 	}
 
-	private static final String[] u = new String[]{"FAR", "NORMAL", "SHORT", "TINY"}; // fog
+	private static final String[] u = new String[]{"OFF", "FAR", "NORMAL", "SHORT", "TINY"}; // fog
 	public boolean a = true; // music
 	public boolean b = true; // sound
 	public boolean c = false; // invert mouse
@@ -130,8 +130,8 @@ public final class GameSettings
 			BufferedImage image;
 			while(texManager.hasNext())
 			{
-				textureID = ((Integer)texManager.next()).intValue();
-				image = textureManager.b.get(Integer.valueOf(textureID));
+				textureID = (Integer)texManager.next();
+				image = textureManager.b.get(textureID);
 				textureManager.a(image, textureID);
 			}
 

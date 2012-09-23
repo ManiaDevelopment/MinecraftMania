@@ -78,6 +78,8 @@ public class Item extends Entity {
 		if(Minecraft.minecraft.settings.texturePack.equals("none"))
 		{
 			this.textureId = var1.a("/terrain.png");
+		} else if(Minecraft.minecraft.settings.texturePack.equals("xray")) {
+			this.textureId = var1.a("", "XRay.zip", "/terrain.png");
 		} else {
 			this.textureId = var1.a(Minecraft.minecraft.settings.texturePack);
 		}

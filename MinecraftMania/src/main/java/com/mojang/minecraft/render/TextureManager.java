@@ -47,6 +47,8 @@ public class TextureManager
 	public List<TextureFX> e = new ArrayList<TextureFX>(); // animations
 	public GameSettings f; // settings
 
+	public HashMap<String, Integer> externalTexturePacks = new HashMap<String, Integer>();
+
 	public File minecraftFolder;
 	public File texturesFolder;
 
@@ -55,6 +57,8 @@ public class TextureManager
 		if(a.get(file) != null)
 		{
 			return a.get(file);
+		} if(externalTexturePacks.get(file) != null) {
+			return externalTexturePacks.get(file);
 		} else {
 			try {
 				c.clear();
@@ -71,6 +75,8 @@ public class TextureManager
 					} else {
 						a(ImageIO.read(TextureManager.class.getResourceAsStream(file)), textureID);
 					}
+
+					a.put(file, textureID);
 				} else if(file.endsWith(".zip")) {
 					ZipFile zip = new ZipFile(new File(minecraftFolder, "texturepacks/" + file));
 
@@ -84,9 +90,9 @@ public class TextureManager
 					}
 
 					zip.close();
-				}
 
-				a.put(file, textureID);
+					externalTexturePacks.put(file, textureID);
+				}
 
 				return textureID;
 			} catch (IOException e) {
@@ -95,43 +101,100 @@ public class TextureManager
 		}
 	}
 
-	public int bindTexture(String file, boolean jar)
+	public int a(String file, String image) // bind texture
 	{
-		if (a.get(file) != null) {
+		if(a.get(file) != null)
+		{
 			return a.get(file);
+		} else if(externalTexturePacks.get(file) != null) {
+			return externalTexturePacks.get(file);
 		} else {
 			try {
-				a.clear();
+				c.clear();
+
 				GL11.glGenTextures(c);
-				int textureId = c.get(0);
 
-				BufferedImage img = null;
+				int textureID = c.get(0);
 
-				if(!jar)
+				if(file.endsWith(".png"))
 				{
-					img = ImageIO.read(new FileInputStream(file));
-				} else {
-					ZipFile zip = new ZipFile(new File(minecraftFolder, "texturepacks/test.zip"));
-
-					System.out.println(zip.getName());
-
-					if(zip.getEntry(file.startsWith("/") ? file.substring(1, file.length()) : file) != null)
+					if(file.startsWith("##"))
 					{
-						img = ImageIO.read(zip.getInputStream(zip.getEntry(file.startsWith("/") ? file.substring(1, file.length()) : file)));
+						a(a(ImageIO.read(TextureManager.class.getResourceAsStream(file.substring(2)))), textureID);
 					} else {
-						img = ImageIO.read(TextureManager.class.getResourceAsStream(file));
+						a(ImageIO.read(TextureManager.class.getResourceAsStream(file)), textureID);
+					}
+
+					a.put(file, textureID);
+				} else if(file.endsWith(".zip")) {
+					ZipFile zip = new ZipFile(new File(minecraftFolder, "textu" + file));
+
+					String image1 = image;
+
+					if(zip.getEntry(image1.startsWith("/") ? image1.substring(1, image1.length()) : image1) != null)
+					{
+						a(ImageIO.read(zip.getInputStream(zip.getEntry(image1.startsWith("/") ? image1.substring(1, image1.length()) : image1))), textureID);
+					} else {
+						a(ImageIO.read(TextureManager.class.getResourceAsStream(image1)), textureID);
 					}
 
 					zip.close();
+
+					externalTexturePacks.put(file, textureID);
 				}
 
-				a(img, textureId);
-
-				a.put(file, textureId);
-
-				return textureId;
+				return textureID;
 			} catch (IOException e) {
-				throw new RuntimeException("Failed to bind texture!", e);
+				throw new RuntimeException("!!", e);
+			}
+		}
+	}
+
+	public int a(String path, String file, String image) // bind texture
+	{
+		if(a.get(file) != null)
+		{
+			return a.get(file);
+		} else if(externalTexturePacks.get(file) != null) {
+			return externalTexturePacks.get(file);
+		} else {
+			try {
+				c.clear();
+
+				GL11.glGenTextures(c);
+
+				int textureID = c.get(0);
+
+				if(file.endsWith(".png"))
+				{
+					if(file.startsWith("##"))
+					{
+						a(a(ImageIO.read(TextureManager.class.getResourceAsStream(file.substring(2)))), textureID);
+					} else {
+						a(ImageIO.read(TextureManager.class.getResourceAsStream(file)), textureID);
+					}
+
+					a.put(file, textureID);
+				} else if(file.endsWith(".zip")) {
+					ZipFile zip = new ZipFile(new File(minecraftFolder, path + file));
+
+					String image1 = image;
+
+					if(zip.getEntry(image1.startsWith("/") ? image1.substring(1, image1.length()) : image1) != null)
+					{
+						a(ImageIO.read(zip.getInputStream(zip.getEntry(image1.startsWith("/") ? image1.substring(1, image1.length()) : image1))), textureID);
+					} else {
+						a(ImageIO.read(TextureManager.class.getResourceAsStream(image1)), textureID);
+					}
+
+					zip.close();
+
+					externalTexturePacks.put(file, textureID);
+				}
+
+				return textureID;
+			} catch (IOException e) {
+				throw new RuntimeException("!!", e);
 			}
 		}
 	}

@@ -205,6 +205,8 @@ public final class LevelRenderer {
 			if(g.settings.texturePack.equals("none"))
 			{
 				GL11.glBindTexture(3553, this.b.a("/terrain.png"));
+			} else if(Minecraft.minecraft.settings.texturePack.equals("xray")) {
+				GL11.glBindTexture(3553, this.b.a("", "XRay.zip", "/terrain.png"));
 			} else {
 				GL11.glBindTexture(3553, this.b.a(g.settings.texturePack));
 			}

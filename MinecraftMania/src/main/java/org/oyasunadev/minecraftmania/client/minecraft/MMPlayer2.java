@@ -113,6 +113,8 @@ public class MMPlayer2 extends Player
 		setPos(player.x, player.y, player.z);
 
 		movement = new ControlMovement(this);
+
+		MMPlayer2.mmPlayer2 = this;
 	}
 
 	@Override
@@ -190,38 +192,35 @@ public class MMPlayer2 extends Player
 
 				movement.update();
 
-				//if(movement.xray)
-				//{
-					/*float speedX = 6.0F;
-					float speedZ = 6.0F;
+				/*float speedX = 6.0F;
+									float speedZ = 6.0F;
 
-					x += Math.sin(xd * 3.1415F / 180.0F) * speed;
-					z += Math.cos(zd * 3.1415F / 180.0F) * speed;*/
+									x += Math.sin(xd * 3.1415F / 180.0F) * speed;
+									z += Math.cos(zd * 3.1415F / 180.0F) * speed;*/
 
-					/*
-					// Walk forward.
-					x -= speed * (float)Math.sin(Math.toRadians(xd));
-					y += speed * (float)Math.tan(Math.toRadians(yd));
-					z += speed * (float)Math.cos(Math.toRadians(zd));
-					*/
+				/*
+				   // Walk forward.
+				   x -= speed * (float)Math.sin(Math.toRadians(xd));
+				   y += speed * (float)Math.tan(Math.toRadians(yd));
+				   z += speed * (float)Math.cos(Math.toRadians(zd));
+				   */
 
-					/*
-					// Walk backwards.
-					x += speed * (float)Math.sin(Math.toRadians(xd));
-					y -= speed * (float)Math.tan(Math.toRadians(yd));
-					z -= speed * (float)Math.cos(Math.toRadians(zd));
-					*/
+				/*
+				   // Walk backwards.
+				   x += speed * (float)Math.sin(Math.toRadians(xd));
+				   y -= speed * (float)Math.tan(Math.toRadians(yd));
+				   z -= speed * (float)Math.cos(Math.toRadians(zd));
+				   */
 
-					/*
-					// Fly up.
-					y += speed;
-					*/
+				/*
+				   // Fly up.
+				   y += speed;
+				   */
 
-					/*
-					// Fly down
-					y -= speed;
-					*/
-				//}
+				/*
+				   // Fly down
+				   y -= speed;
+				   */
 
 				if(fly)
 				{
@@ -282,7 +281,7 @@ public class MMPlayer2 extends Player
 							// Regular = 0.38F.
 							// 1 Block + Half Block = 0.48F.
 							// 2 Blocks = 0.56F.
-							yd = 0.38F * movement.mult;
+							yd = 0.43F * movement.mult;
 
 							movement.fall = true;
 						}
@@ -474,6 +473,8 @@ public class MMPlayer2 extends Player
 		}
 	}
 
+	public static MMPlayer2 mmPlayer2;
+
 	private Level level_;
 	private Minecraft minecraft;
 	private JFrame mpFrame;
@@ -515,7 +516,7 @@ public class MMPlayer2 extends Player
 		private boolean speed1 = false;
 		private boolean speed2 = false;
 
-		private boolean xray = false;
+		public boolean xray = false;
 
 		private float mult;
 
@@ -581,7 +582,7 @@ public class MMPlayer2 extends Player
 				noclip = !noclip;
 			}
 
-			if(id == Keyboard.KEY_F2 && pressed)
+			/*if(id == Keyboard.KEY_F2 && pressed)
 			{
 				//BufferedImage image = new BufferedImage(minecraft.b, minecraft.c_Vector, BufferedImage.TYPE_INT_RGB);
 
@@ -594,7 +595,7 @@ public class MMPlayer2 extends Player
 					e.printStackTrace();
 				}*/
 
-				int width = minecraft.width;
+				/*int width = minecraft.width;
 				int height = minecraft.height;
 				int bpp = 4;
 
@@ -695,6 +696,14 @@ public class MMPlayer2 extends Player
 				} catch(IOException ex) {
 					ex.printStackTrace();
 				}
+			}*/
+
+			if(id == Keyboard.KEY_F2 && pressed)
+			{
+			}
+
+			if(id == Keyboard.KEY_F3 && pressed)
+			{
 			}
 
 			if(id == Keyboard.KEY_F4 && pressed)
@@ -721,40 +730,13 @@ public class MMPlayer2 extends Player
 
 			if(id == Keyboard.KEY_F6 && pressed)
 			{
-				minecraft.textureManager.a("test.zip");
+				xray = !xray;
 
-				minecraft.textureManager.a.clear();
-				minecraft.textureManager.b.clear();
-
-				minecraft.a.a();
+				if(!xray)
+				{
+					minecraft.settings.texturePack = minecraft.settings.texturePacks.get(minecraft.settings.currentTexturePack);
+				}
 			}
-
-			/*if(id == Keyboard.KEY_F6 && pressed)
-			{
-				Minecraft.mipmapMode = 0;
-
-				minecraft.textureManager.a.clear();
-				minecraft.textureManager.b.clear();
-				minecraft.a.a();
-			}
-
-			if(id == Keyboard.KEY_F7 && pressed)
-			{
-				Minecraft.mipmapMode = 1;
-
-				minecraft.textureManager.a.clear();
-				minecraft.textureManager.b.clear();
-				minecraft.a.a();
-			}
-
-			if(id == Keyboard.KEY_F8 && pressed)
-			{
-				Minecraft.mipmapMode = 2;
-
-				minecraft.textureManager.a.clear();
-				minecraft.textureManager.b.clear();
-				minecraft.a.a();
-			}*/
 
 			/*if(id == Keyboard.KEY_F7 && pressed)
 			{
@@ -833,7 +815,7 @@ public class MMPlayer2 extends Player
 
 			if(xray)
 			{
-				// TODO: XRay
+				minecraft.settings.texturePack = "xray";
 			}
 		}
 

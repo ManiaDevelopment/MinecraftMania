@@ -140,6 +140,8 @@ public final class HUDScreen extends Screen {
 				if(minecraft.settings.texturePack.equals("none"))
 				{
 					var20 = var6.a("/terrain.png");
+				} else if(minecraft.settings.texturePack.equals("xray")) {
+					var20 = var6.a("", "XRay.zip", "/terrain.png");
 				} else {
 					var20 = var6.a(minecraft.settings.texturePack);
 				}

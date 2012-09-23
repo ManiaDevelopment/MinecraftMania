@@ -174,7 +174,7 @@ public final class Minecraft implements Runnable
 					if(k)
 					{
 						try {
-							Mouse.setNativeCursor((org.lwjgl.input.Cursor)null);
+							Mouse.setNativeCursor(null);
 						} catch(LWJGLException e) {
 							e.printStackTrace();
 						}
@@ -781,6 +781,8 @@ public final class Minecraft implements Runnable
 													if(settings.texturePack.equals("none"))
 													{
 														var110 = var96.textureManager.a("/terrain.png");
+													} else if(settings.texturePack.equals("xray")) {
+														var110 = var96.textureManager.a("", "XRay.zip", "/terrain.png");
 													} else {
 														var110 = var96.textureManager.a(settings.texturePack);
 													}
@@ -887,6 +889,8 @@ public final class Minecraft implements Runnable
 												if(settings.texturePack.equals("none"))
 												{
 													var108 = var89.b.a("/terrain.png");
+												} else if(settings.texturePack.equals("xray")) {
+													var108 = var89.b.a("", "XRay.zip", "/terrain.png");
 												} else {
 													var108 = var89.b.a(settings.texturePack);
 												}
@@ -988,6 +992,8 @@ public final class Minecraft implements Runnable
 											if(settings.texturePack.equals("none"))
 											{
 												GL11.glBindTexture(3553, var89.b.a("/terrain.png"));
+											} else if(settings.texturePack.equals("xray")) {
+												GL11.glBindTexture(3553, var89.b.a("", "XRay.zip", "/terrain.png"));
 											} else {
 												GL11.glBindTexture(3553, var89.b.a(settings.texturePack));
 											}
@@ -1097,6 +1103,8 @@ public final class Minecraft implements Runnable
 											if(settings.texturePack.equals("none"))
 											{
 												GL11.glBindTexture(3553, var112.a.textureManager.a("/terrain.png"));
+											} else if(settings.texturePack.equals("xray")) {
+												GL11.glBindTexture(3553, var112.a.textureManager.a("", "XRay.zip", "/terrain.png"));
 											} else {
 												GL11.glBindTexture(3553, var112.a.textureManager.a(settings.texturePack));
 											}
@@ -1155,6 +1163,7 @@ public final class Minecraft implements Runnable
 						++tick;
 					} catch (Exception var58) {
 						this.a((PopUpScreen)(new ErrorScreen("Client error", "The game broke! [" + var58 + "]")));
+						System.out.println("The game broke! [" + var58 + "]");
 						var58.printStackTrace();
 					}
 
@@ -1202,7 +1211,7 @@ public final class Minecraft implements Runnable
 				Mouse.setGrabbed(true);
 			}
 
-			a((PopUpScreen) null);
+			a((PopUpScreen)null);
 
 			lastClick = ticks + 10000;
 		}
@@ -1328,6 +1337,8 @@ public final class Minecraft implements Runnable
 		if(settings.texturePack.equals("none"))
 		{
 			GL11.glBindTexture(3553, this.textureManager.a("/terrain.png"));
+		} else if(settings.texturePack.equals("xray")) {
+			GL11.glBindTexture(3553, this.textureManager.a("", "XRay.zip", "/terrain.png"));
 		} else {
 			GL11.glBindTexture(3553, this.textureManager.a(settings.texturePack));
 		}
@@ -1808,6 +1819,8 @@ public final class Minecraft implements Runnable
 	{
 		String username = this.sessionData != null ? sessionData.b : "anonymous";
 		Level level1 = (new LevelGenerator(progressBar)).a(username, 128 << var1, 128 << var1, 64);
+
+		System.out.println(128 << var1);
 
 		gameMode.b(level1);
 		a(level1);

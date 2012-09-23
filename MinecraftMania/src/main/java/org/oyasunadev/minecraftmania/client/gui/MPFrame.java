@@ -72,7 +72,7 @@ public class MPFrame extends JFrame implements Runnable
 				{
 					if(mmPlayer2 == null)
 					{
-						// TODO: Change last argument to false before release.
+						// TODO: Change second to last argument to false before release.
 
 						mmPlayer2 = new MMPlayer2(mmApplet.minecraft.level, mmApplet.minecraft.player, mmApplet.minecraft, true, this);
 
