@@ -4,6 +4,7 @@ import com.mojang.minecraft.GameSettings;
 import com.mojang.minecraft.render.ShapeRender;
 import com.mojang.minecraft.render.TextureManager;
 import org.lwjgl.opengl.GL11;
+import org.oyasunadev.minecraftmania.client.minecraft.gui.ExtRenderer;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -150,10 +151,10 @@ public class FontRenderer
 
 			if(shadow)
 			{
-				color = (color & 16579836) >> 2;
+				color = (color & 0xFCFCFC) >> 2;
 			}
 
-			GL11.glBindTexture(3553, fontTextureID);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, fontTextureID);
 
 			ShapeRender var6 = ShapeRender.a;
 			ShapeRender.a.b();
@@ -189,13 +190,17 @@ public class FontRenderer
 						color = var9;
 					}
 
+					//var9 /= 4;
+					//var11 /= 4;
+					//var10 /= 4;
+
 					color = color << 16 | var11 << 8 | var10;
 
 					count += 2;
 
 					if(shadow)
 					{
-						color = (color & 16579836) >> 2;
+						color = (color & 0xFCFCFC) >> 2;
 					}
 
 					var6.a(color);

@@ -57,7 +57,7 @@ public class MPFrame extends JFrame implements Runnable
 			{
 				Thread.sleep(1000);
 
-				NetworkPlayer np = null;
+				/*NetworkPlayer np = null;
 				for(Object o : mmApplet.minecraft.networkManager.f.values())
 				{
 					np = (NetworkPlayer)o;
@@ -66,7 +66,7 @@ public class MPFrame extends JFrame implements Runnable
 					{
 						np.displayName = np.displayName.replace("7", "e");
 					}
-				}
+				}*/
 
 				if((mmApplet.minecraft.level != null && oldLevel != mmApplet.minecraft.level))
 				{
